@@ -5,6 +5,7 @@ namespace App\Entity;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Post;
 use App\Repository\CategoryRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -19,7 +20,8 @@ use Symfony\Component\Validator\Constraints as Assert;
         new GetCollection(),
         new Get()
     ],
-    normalizationContext: ['groups' => ['category:read']]
+    normalizationContext: ['groups' => ['category:read']],
+    denormalizationContext: ['groups' => ['category:write']]
 )]
 class Category
 {
@@ -32,15 +34,15 @@ class Category
     #[ORM\Column(length: 100)]
     #[Assert\NotBlank(message: 'Le nom de la catégorie est obligatoire.')]
     #[Assert\Length(max: 100, maxMessage: 'Le nom ne peut pas dépasser {{ limit }} caractères.')]
-    #[Groups(['category:read', 'part:read'])]
+    #[Groups(['category:read', 'category:write', 'part:read'])]
     private ?string $name = null;
 
     #[ORM\Column(type: 'text', nullable: true)]
-    #[Groups(['category:read'])]
+    #[Groups(['category:read', 'category:write'])]
     private ?string $description = null;
 
     #[ORM\Column(length: 100, nullable: true)]
-    #[Groups(['category:read'])]
+    #[Groups(['category:read', 'category:write'])]
     private ?string $slug = null;
 
     /**
